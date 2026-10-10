@@ -1,0 +1,24 @@
+<main class="login-page">
+  <section class="login-brand-panel">
+    <div class="brand-mark"><img src="/logo-virgen-dolorosa.png" alt="Logo de la Institución Educativa Virgen Dolorosa" /></div>
+    <div class="brand-copy"><span class="eyebrow">Sistema de Gestión Escolar</span><h1>Educamos con fe,<br /><em>servimos con amor.</em></h1><p>Una plataforma para acompañar el aprendizaje, la gestión y la comunidad educativa de Virgen Dolorosa.</p></div>
+    <div class="brand-footer"><span>PAZ Y BIEN</span><small>La Banda de Shilcayo · San Martín</small></div>
+  </section>
+  <section class="login-form-panel"><div class="form-wrap">
+    <div class="mobile-brand"><img src="/logo-virgen-dolorosa.png" alt="Virgen Dolorosa" /><span>SIGEV</span></div>
+    <div class="welcome-copy"><span class="section-kicker">Bienvenido de nuevo</span><h2>Ingresa a tu cuenta</h2><p>Accede al panel de gestión de tu institución educativa.</p></div>
+    <div class="role-selector" aria-label="Selecciona un rol de demostración"><button *ngFor="let role of roles" type="button" [class.active]="selectedRole === role" (click)="setRole(role)">{{ role }}</button></div>
+    <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+      <label for="email">Correo institucional</label>
+      <div class="input-shell" [class.invalid]="submitted && loginForm.controls.email.invalid"><svg lucideMail class="input-icon" [size]="18"></svg><input id="email" type="email" formControlName="email" placeholder="nombre@virgendolorosa.edu.pe" autocomplete="email" /></div>
+      <small class="error" *ngIf="submitted && loginForm.controls.email.invalid">Ingresa un correo institucional válido.</small>
+      <div class="password-label"><label for="password">Contraseña</label><a href="#">¿Olvidaste tu contraseña?</a></div>
+      <div class="input-shell" [class.invalid]="submitted && loginForm.controls.password.invalid"><svg lucideLockKeyhole class="input-icon" [size]="18"></svg><input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••" autocomplete="current-password" /><button type="button" class="icon-button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"><svg lucideEyeOff *ngIf="showPassword" [size]="18"></svg><svg lucideEye *ngIf="!showPassword" [size]="18"></svg></button></div>
+      <small class="error" *ngIf="submitted && loginForm.controls.password.invalid">La contraseña debe tener al menos 6 caracteres.</small>
+      <label class="check-row"><input type="checkbox" formControlName="remember" /><span>Recordar este dispositivo</span></label>
+      <button class="submit-button" type="submit">Ingresar al sistema <svg lucideLogIn [size]="17"></svg></button>
+    </form>
+    <div class="demo-note"><svg lucideSchool [size]="17"></svg><span>Modo demostración · Los datos mostrados son simulados</span></div>
+    <p class="support-copy">¿Necesitas ayuda? <a href="mailto:vdsecretaria@virgendolorosatarapoto.edu.pe">Contacta con secretaría</a></p>
+  </div></section>
+</main>
