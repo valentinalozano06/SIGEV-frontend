@@ -1,8 +1,13 @@
+@use './styles/institutional';
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
 
 :root { font-family: 'DM Sans', Arial, sans-serif; color-scheme: light; }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; margin: 0; }
 body { background: #f5f8fb; }
+.sigev-alert.swal2-popup { border: 1px solid #dfe9eb; border-radius: 14px; font-family: 'DM Sans', Arial, sans-serif; box-shadow: 0 18px 45px #15384b24; }
+.sigev-alert .swal2-title { color: #1c354c; font-size: 18px; }
+.sigev-alert .swal2-html-container { color: #63798a; font-size: 13px; }
+.sigev-alert-confirm, .sigev-alert-cancel { border-radius: 8px !important; font-size: 12px !important; font-weight: 700 !important; }
 button, input { font-family: inherit; }
 lucide-icon, svg { display: inline-block; vertical-align: middle; }

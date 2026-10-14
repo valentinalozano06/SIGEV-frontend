@@ -1,0 +1,38 @@
+.app-shell {
+  --ink: #1c354c;
+  --muted: #63798a;
+  --teal: #22677a;
+  --gold: #c3a45e;
+  --line: #e1e7e9;
+  --canvas: #f4f6f6;
+  --radius: 14px;
+  --shadow: 0 4px 20px #19384d04, 0 1px 3px #19384d03;
+  font-size: 14px;
+  line-height: 1.5;
+  input, select, button { font: inherit; }
+  button, a, input, select, summary { -webkit-tap-highlight-color: transparent; }
+  .primary, .secondary, .danger {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 42px; padding: 10px 16px; border: 1px solid transparent;
+    border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none;
+  }
+  .primary { background: var(--teal); color: #fff; box-shadow: 0 3px 8px #22677a16; }
+  .primary:hover { background: #184f62; }
+  .secondary { border-color: var(--line); background: #fff; color: #405f74; }
+  .secondary:hover { background: #f0f5f5; }
+  .danger { background: #ab373e; color: #fff; }
+  :where(button,a,input,select,summary,[tabindex]):focus-visible { outline: 2px solid #30859a; outline-offset: 3px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border: 1px solid #d9eee3; border-radius: 6px; background: #f0f8f3; color: #317256; font-size: 11px; font-weight: 500; }
+  .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .badge.inactive { background: #f3f4f5; color: #697785; border-color: #e5e8ea; }
+  .table-scroll { max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+  table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; font-size: 13px; }
+  th { padding: 13px 22px; border-block: 1px solid #e8edef; background: #f7f9f9; color: #63798a; font-size: 11px; font-weight: 600; }
+  td { padding: 16px 22px; border-bottom: 1px solid #edf1f2; color: #3e586c; }
+  tbody tr:hover { background: #fafcfc; }
+  td small { display: block; color: #738999; font-size: 11px; margin-top: 4px; }
+  .avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf2f3; color: #356b7b; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .student-cell { display: flex; align-items: center; gap: 12px; }
+  .text-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--teal); text-decoration: none; font-weight: 600; }
+  .text-link:hover { text-decoration: underline; }
+}

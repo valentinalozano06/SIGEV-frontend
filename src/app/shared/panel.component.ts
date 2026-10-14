@@ -1,0 +1,5 @@
+import { Component, Input } from '@angular/core';
+@Component({selector:'app-panel',standalone:true,
+template:`<section class="panel"><header><div><span class="overline">{{ eyebrow }}</span><h2>{{ title }}</h2><p>{{ description }}</p></div><div class="panel-actions"><ng-content select="[panelAction]" /></div></header><ng-content /></section>`,
+styles:[`:host{display:block;min-width:0}.panel{height:100%;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px}.overline{display:block;color:#957b47;font-size:9px;font-weight:700;letter-spacing:.14em;margin-bottom:7px}.overline:empty{display:none}h2{font-size:17px;letter-spacing:-.02em;margin:0;color:var(--ink)}p{color:var(--muted);font-size:12px;line-height:1.5;margin:6px 0 0}p:empty{display:none}.panel-actions{flex-shrink:0}@media(max-width:600px){header{padding:20px;align-items:flex-start;flex-wrap:wrap}h2{font-size:16px}}`],})
+export class PanelComponent { @Input() title=''; @Input() description=''; @Input() eyebrow=''; }

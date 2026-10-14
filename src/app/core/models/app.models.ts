@@ -1,4 +1,4 @@
-export type UserRole = 'Administrador' | 'Director' | 'Docente' | 'Estudiante' | 'Apoderado';
+export type UserRole = 'Administrador' | 'Director' | 'Docente' | 'Auxiliar' | 'Estudiante' | 'Apoderado';
 
 export interface UserSession {
   name: string;

@@ -1,0 +1,27 @@
+<aside #panel class="sidebar" [class.compact]="compact" [class.mobile]="mobile" [class.drawer-open]="mobile && open" aria-label="Menú principal" [attr.role]="mobile && open ? 'dialog' : null" [attr.aria-modal]="mobile && open ? 'true' : null">
+  <div class="sidebar-head">
+    <a class="brand" routerLink="/dashboard" (click)="navigated.emit()" aria-label="SIGEV, inicio"><span>SIGEV</span></a>
+    <button #toggle class="menu-button" type="button" (click)="toggled.emit()" [attr.aria-label]="toggleLabel" [title]="toggleLabel" [attr.aria-expanded]="!compact" aria-controls="sidebar-links">
+      @if (compact) { <svg lucideChevronRight [size]="18" /> } @else { <svg lucideChevronLeft [size]="18" /> }
+    </button>
+  </div>
+  <nav id="sidebar-links" class="navigation" aria-label="Secciones del sistema" [hidden]="mobile && !open">
+    @for (group of [{title:'Principal',items:primary}, {title:'Académico',items:academic}]; track group.title) {
+      @if (group.items.length) { <span class="nav-label">{{ group.title }}</span> }
+      @for (item of group.items; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="navigated.emit()" [attr.aria-label]="item.label" [title]="item.label" (mouseenter)="showHint($event, item.label)" (mouseleave)="hint = ''" (focus)="showHint($event, item.label)" (blur)="hint = ''">
+          @switch (item.route) {
+            @case ('/dashboard') { <svg lucideLayoutDashboard /> } @case ('/estudiantes') { <svg lucideUsers /> }
+            @case ('/matriculas') { <svg lucideClipboardList /> } @case ('/asistencias') { <svg lucideCalendarCheck /> } @case ('/control-ingreso') { <svg lucideClipboardCheck /> }
+            @case ('/academico') { <svg lucideBookOpen /> } @case ('/docentes') { <svg lucideGraduationCap /> }
+            @case ('/reportes') { <svg lucideFileBarChart /> }
+          }
+          <span class="nav-copy">{{ item.label }}</span>
+        </a>
+      }
+    }
+    @if (configuration) { <span class="nav-label">Sistema</span><a routerLink="/configuracion" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="navigated.emit()" aria-label="Configuración" title="Configuración"><svg lucideSettings /><span class="nav-copy">Configuración</span></a> }
+  </nav>
+  <div class="sidebar-footer" [hidden]="mobile && !open"><span class="school-year">PERIODO ESCOLAR · 2026</span><button class="logout-button" aria-label="Cerrar sesión" title="Cerrar sesión" (click)="signedOut.emit()"><svg lucideLogOut [size]="19" /><span class="nav-copy">Cerrar sesión</span></button></div>
+  @if (hint && compact && !mobile) { <span class="nav-tooltip" [style.top.px]="hintTop" aria-hidden="true">{{ hint }}</span> }
+</aside>

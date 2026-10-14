@@ -1,0 +1,65 @@
+<section class="students-page">
+  @if (notice()) { <div class="notice" role="status"><span>{{ notice() }}</span><button type="button" (click)="notice.set('')" aria-label="Cerrar aviso">×</button></div> }
+  <div class="stats">
+    <app-stat-card label="Total de estudiantes" [value]="overview.summary().total" detail="Primaria y secundaria" tag="2026" [featured]="true"><svg lucideUsers [size]="20" /></app-stat-card>
+    <app-stat-card label="Estudiantes activos" [value]="overview.summary().active" detail="Del total registrado" [percent]="overview.summary().activePercent"><svg lucideUserCheck [size]="20" /></app-stat-card>
+    <app-stat-card label="Estudiantes inactivos" [value]="overview.summary().inactive" detail="Del total registrado" [percent]="overview.summary().inactivePercent"><svg lucideUserMinus [size]="20" /></app-stat-card>
+  </div>
+  <app-panel title="Directorio escolar" eyebrow="REGISTRO DE ESTUDIANTES" [description]="filtered().length + ' estudiantes encontrados'">
+    @if (canManage()) { <button panelAction class="primary compact-action" (click)="open('create')"><svg lucidePlus [size]="16" />Registrar</button> }
+    <div class="filters">
+      <label class="search"><span>Buscar estudiante</span><div><svg lucideSearch [size]="17" /><input #search type="search" placeholder="Nombre, DNI o código" [value]="query().search" (input)="setFilter('search', search.value)" /></div></label>
+      <label><span>Grado</span><select #gradeFilter [value]="query().grade" (change)="setFilter('grade', gradeFilter.value)"><option value="">Todos los grados</option>@for (grade of grades; track grade) { <option [value]="grade">{{ grade }}</option> }</select></label>
+      <label><span>Sección</span><select #sectionFilter [value]="query().section" (change)="setFilter('section', sectionFilter.value)"><option value="">Todas</option>@for (section of sections; track section) { <option>{{ section }}</option> }</select></label>
+      <label><span>Estado</span><select #statusFilter [value]="query().status" (change)="setFilter('status', statusFilter.value)"><option value="">Todos</option><option>Activo</option><option>Inactivo</option></select></label>
+      <button class="text-button clear-filter" (click)="clearFilters()">Limpiar</button>
+    </div>
+    @if (activeFilters().length) { <div class="active-filters" aria-label="Filtros aplicados"><span>Filtrando por</span>@for (filter of activeFilters(); track filter.key) { <button type="button" (click)="setFilter(filter.key, '')" [attr.aria-label]="'Quitar filtro ' + filter.label">{{ filter.label }}: {{ filter.value }} <svg lucideX [size]="12" /></button> }</div> }
+    <div class="table-scroll" tabindex="0" aria-label="Tabla de estudiantes"><table><thead><tr><th scope="col">Estudiante</th><th scope="col">DNI</th><th scope="col">Grado y sección</th><th scope="col">Apoderado</th><th scope="col">Estado</th><th scope="col" class="actions-heading">Acciones</th></tr></thead><tbody>
+      @for (student of rows(); track student.id) {
+        <tr><td><div class="student-cell"><span class="avatar">{{ initials(student) }}</span><div><button class="name-button" (click)="open('profile', student)">{{ student.firstName }} {{ student.lastName }}</button><small>{{ student.id }}</small></div></div></td><td>{{ student.dni }}</td><td>{{ student.grade }}<small>Sección {{ student.section }}</small></td><td>{{ student.guardianName }}<small>{{ student.guardianPhone }}</small></td><td><span class="badge" [class.inactive]="student.status === 'Inactivo'">{{ student.status }}</span></td><td><div class="row-actions"><button class="icon-button" [attr.aria-label]="'Ver perfil de ' + student.firstName + ' ' + student.lastName" title="Ver perfil" (click)="open('profile', student)"><svg lucideEye [size]="17" /></button>@if (canManage()) { <button class="icon-button" [attr.aria-label]="'Editar a ' + student.firstName + ' ' + student.lastName" title="Editar" (click)="open('edit', student)"><svg lucidePencil [size]="16" /></button><button class="icon-button danger-icon" [attr.aria-label]="'Eliminar a ' + student.firstName + ' ' + student.lastName" title="Eliminar" (click)="open('delete', student)"><svg lucideTrash2 [size]="16" /></button> }</div></td></tr>
+      } @empty { <tr><td colspan="6" class="empty"><svg lucideSearch [size]="28" /><h3>No se encontraron estudiantes</h3><p>Prueba con otro nombre o cambia los filtros.</p><button class="secondary" (click)="clearFilters()">Mostrar todos</button></td></tr> }
+    </tbody></table></div>
+    <footer class="pagination"><span>{{ first() }}–{{ last() }} de {{ filtered().length }} estudiantes</span><div><label>Por página <select #size [value]="pageSize()" (change)="resizePage(size.value)"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></label><button class="icon-button" aria-label="Página anterior" [disabled]="page() === 1" (click)="changePage(-1)"><svg lucideChevronLeft [size]="18" /></button><span aria-live="polite">{{ page() }} / {{ pageCount() }}</span><button class="icon-button" aria-label="Página siguiente" [disabled]="page() === pageCount()" (click)="changePage(1)"><svg lucideChevronRight [size]="18" /></button></div></footer>
+  </app-panel>
+</section>
+
+<app-modal [open]="mode() !== null" [title]="dialogTitle()" (closed)="close()">
+  @if (mode() === 'create' || mode() === 'edit') {
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <p class="form-hint">Completa los campos. El correo del apoderado es opcional.</p>
+      <fieldset><legend>Datos del estudiante</legend><div class="form-grid">
+        <label>Nombres<input formControlName="firstName" autocomplete="off" maxlength="60" [attr.aria-invalid]="invalid('firstName')" />@if (invalid('firstName')) { <small class="field-error">Ingresa los nombres.</small> }</label>
+        <label>Apellidos<input formControlName="lastName" autocomplete="off" maxlength="80" [attr.aria-invalid]="invalid('lastName')" />@if (invalid('lastName')) { <small class="field-error">Ingresa los apellidos.</small> }</label>
+        <label>DNI<input formControlName="dni" inputmode="numeric" maxlength="8" [attr.aria-invalid]="invalid('dni')" />@if (invalid('dni')) { <small class="field-error">Debe contener 8 dígitos.</small> }</label>
+        <label>Fecha de nacimiento<input type="date" formControlName="birthDate" [max]="today" [attr.aria-invalid]="invalid('birthDate')" />@if (invalid('birthDate')) { <small class="field-error">Ingresa una fecha válida, no futura.</small> }</label>
+        <label>Grado<select formControlName="grade" [attr.aria-invalid]="invalid('grade')"><option value="">Selecciona un grado</option>@for (grade of grades; track grade) { <option [value]="grade">{{ grade }}</option> }</select>@if (invalid('grade')) { <small class="field-error">Selecciona un grado.</small> }</label>
+        <label>Sección<select formControlName="section" [attr.aria-invalid]="invalid('section')"><option value="">Selecciona una sección</option>@for (section of sections; track section) { <option>{{ section }}</option> }</select>@if (invalid('section')) { <small class="field-error">Selecciona una sección.</small> }</label>
+        <label>Estado<select formControlName="status"><option>Activo</option><option>Inactivo</option></select></label>
+      </div></fieldset>
+      <fieldset><legend>Datos del apoderado</legend><div class="form-grid">
+        <label>Nombre completo<input formControlName="guardianName" maxlength="120" [attr.aria-invalid]="invalid('guardianName')" />@if (invalid('guardianName')) { <small class="field-error">Ingresa el nombre del apoderado.</small> }</label>
+        <label>Parentesco<select formControlName="guardianRelationship"><option>Madre</option><option>Padre</option><option>Apoderado</option></select></label>
+        <label>Celular<input formControlName="guardianPhone" type="tel" maxlength="9" [attr.aria-invalid]="invalid('guardianPhone')" />@if (invalid('guardianPhone')) { <small class="field-error">Ingresa 9 dígitos, comenzando por 9.</small> }</label>
+        <label>Correo electrónico<input formControlName="guardianEmail" type="email" maxlength="120" [attr.aria-invalid]="invalid('guardianEmail')" />@if (invalid('guardianEmail')) { <small class="field-error">Ingresa un correo válido.</small> }</label>
+      </div></fieldset>
+      @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
+      <div class="modal-actions"><button class="secondary" type="button" (click)="close()">Cancelar</button><button class="primary" type="submit">{{ mode() === 'edit' ? 'Guardar cambios' : 'Registrar estudiante' }}</button></div>
+    </form>
+  }
+  @if (mode() === 'profile') {
+    @if (selected(); as student) {
+      <div class="profile-heading"><span class="avatar large">{{ initials(student) }}</span><div><h3>{{ student.firstName }} {{ student.lastName }}</h3><p>{{ student.id }} · {{ student.grade }} · {{ student.section }}</p></div><span class="badge" [class.inactive]="student.status === 'Inactivo'">{{ student.status }}</span></div>
+      <h3 class="section-title">Información personal</h3><dl class="profile-grid"><div><dt>DNI</dt><dd>{{ student.dni }}</dd></div><div><dt>Fecha de nacimiento</dt><dd>{{ student.birthDate | date:'dd/MM/yyyy' }}</dd></div></dl>
+      <h3 class="section-title">Apoderado</h3><dl class="profile-grid"><div><dt>Nombre</dt><dd>{{ student.guardianName }}</dd></div><div><dt>Parentesco</dt><dd>{{ student.guardianRelationship }}</dd></div><div><dt>Celular</dt><dd>{{ student.guardianPhone }}</dd></div><div><dt>Correo</dt><dd>{{ student.guardianEmail || 'Sin registrar' }}</dd></div></dl>
+      <app-student-qr [student]="student"></app-student-qr>
+      <h3 class="section-title">Historial académico</h3><div class="history">@for (record of student.history; track record.year) { <article><strong>{{ record.year }}</strong><span>{{ record.grade }} · {{ record.section }}</span><span class="badge">{{ record.result }}</span></article> } @empty { <p>No hay periodos anteriores registrados.</p> }</div>
+      <div class="modal-actions"><button class="secondary" (click)="close()">Cerrar</button>@if (canManage()) { <button class="primary" (click)="open('edit', student)">Editar estudiante</button> }</div>
+    }
+  }
+  @if (mode() === 'delete') {
+    <p class="delete-copy">Se eliminará a <strong>{{ selected()?.firstName }} {{ selected()?.lastName }}</strong> del directorio de esta sesión.</p><p class="form-hint">Esta acción no se puede deshacer.</p>
+    @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
+    <div class="modal-actions"><button class="secondary" (click)="close()">Cancelar</button><button class="danger" (click)="remove()">Eliminar estudiante</button></div>
+  }
+</app-modal>
